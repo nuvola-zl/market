@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>确认购买</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:"微软雅黑"}
+        body{background:#f5f7fa;padding:40px 0;}
+        .box{width:550px;background:#fff;margin:0 auto;padding:35px;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.06);}
+        h2{text-align:center;margin-bottom:25px;color:#333;}
+        .msg{text-align:center;color:red;font-size:16px;margin:20px 0;line-height:1.5;}
+        .info{font-size:16px;line-height:2;color:#555;margin:15px 0;text-align:center;}
+        img{width:150px;height:150px;object-fit:cover;display:block;margin:10px auto;}
+        .num-input{
+            width:120px;padding:10px;text-align:center;font-size:16px;
+            border:1px solid #ddd;border-radius:6px;display:block;margin:10px auto;
+        }
+        .btn{
+            width:180px;height:46px;line-height:46px;text-align:center;
+            background:#409eff;color:#fff;font-size:16px;
+            border:none;border-radius:6px;cursor:pointer;display:block;margin:25px auto 0;
+            text-decoration:none;
+        }
+        .back-btn{text-align:center;margin-top:20px;}
+        .back-btn a{color:#666;text-decoration:none;}
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>确认购买</h2>
+
+    <!-- 错误/成功提示 -->
+    <div class="msg" th:text="${msg}" th:if="${msg != null}"></div>
+
+    <img th:src="${goods.image}">
+    <div class="info">
+        商品名称：[[${goods.name}]]<br>
+        单价：[[${goods.price}]] 元<br>
+        库存：[[${goods.stock}]]<br>
+    </div>
+
+    <!-- 购买数量输入框 -->
+    <form th:action="@{/home/doBuy}" method="get">
+        <input type="hidden" name="id" th:value="${goods.id}">
+        <input type="number" name="num" class="num-input" value="1" min="1" required>
+        <button class="btn">确认购买</button>
+    </form>
+
+    <div class="back-btn">
+        <a href="/home/goods">返回商品列表</a>
+    </div>
+</div>
+
+</body>
+</html>

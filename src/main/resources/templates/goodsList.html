@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品列表</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:"微软雅黑"}
+        body{background:#f5f7fa;padding:20px;display:flex;}
+        .left{width:200px;background:#fff;padding:20px;border-radius:8px;margin-right:20px;}
+        .left a{display:block;padding:10px 14px;margin:8px 0;text-decoration:none;color:#333;border-radius:4px;}
+        .left a.active{background:#409eff;color:#fff;}
+        .right{flex:1;background:#fff;padding:20px;border-radius:8px;}
+        table{width:100%;border-collapse:collapse;margin-top:10px;}
+        td,th{border:1px solid #ddd;padding:10px;text-align:center;}
+        th{background:#f8f9fa;}
+        img{width:70px;height:70px;object-fit:cover;}
+        .back{margin-top:20px;display:inline-block;padding:10px 20px;background:#67c23a;color:#fff;text-decoration:none;border-radius:6px;}
+    </style>
+</head>
+<body>
+
+<div class="left">
+    <a th:href="@{/home/goods(category=全部)}" th:class="${currentCategory == '全部' ? 'active' : ''}">全部商品</a>
+    <a th:href="@{/home/goods(category=水果)}" th:class="${currentCategory == '水果' ? 'active' : ''}">水果</a>
+    <a th:href="@{/home/goods(category=蔬菜)}" th:class="${currentCategory == '蔬菜' ? 'active' : ''}">蔬菜</a>
+    <a th:href="@{/home/goods(category=衣物)}" th:class="${currentCategory == '衣物' ? 'active' : ''}">衣物</a>
+    <a th:href="@{/home/goods(category=厨具)}" th:class="${currentCategory == '厨具' ? 'active' : ''}">厨具</a>
+    <a th:href="@{/home/goods(category=电子)}" th:class="${currentCategory == '电子' ? 'active' : ''}">电子</a>
+    <a th:href="@{/home/goods(category=运动)}" th:class="${currentCategory == '运动' ? 'active' : ''}">运动</a>
+    <a th:href="@{/home/goods(category=医药)}" th:class="${currentCategory == '医药' ? 'active' : ''}">医药</a>
+    <a th:href="@{/home/goods(category=图书)}" th:class="${currentCategory == '图书' ? 'active' : ''}">图书</a>
+    <a th:href="@{/home/goods(category=饮料)}" th:class="${currentCategory == '饮料' ? 'active' : ''}">饮料</a>
+    <a th:href="@{/home/goods(category=酒类)}" th:class="${currentCategory == '酒类' ? 'active' : ''}">酒类</a>
+    <a th:href="@{/home/goods(category=粮油)}" th:class="${currentCategory == '粮油' ? 'active' : ''}">粮油</a>
+    <a th:href="@{/home/goods(category=其他)}" th:class="${currentCategory == '其他' ? 'active' : ''}">其他</a>
+</div>
+
+<div class="right">
+    <h2>商品列表</h2>
+    <table>
+        <tr>
+            <th>图片</th>
+            <th>名称</th>
+            <th>价格</th>
+            <th>单位</th>
+            <th>库存</th>
+            <th>分类</th>
+            <th>描述</th>
+            <th>操作</th>
+        </tr>
+        <tr th:each="g : ${goodsList}">
+            <td><img th:src="${g.image}"></td>
+            <td th:text="${g.name}"></td>
+            <td th:text="${g.price}"></td>
+            <td th:text="${g.unit}"></td>
+            <td th:text="${g.stock}"></td>
+            <td th:text="${g.category}"></td>
+            <td th:text="${g.description}"></td>
+            <td>
+                <!-- 跳转到 购买页面，而不是直接购买 -->
+                <a th:href="@{/home/toBuyPage(id=${g.id})}"
+                   style="padding:6px 12px;background:#409eff;color:#fff;border-radius:4px;text-decoration:none;">
+                    购买
+                </a>
+            </td>
+        </tr>
+    </table>
+
+    <a href="/index" class="back">返回首页</a>
+</div>
+
+</body>
+</html>

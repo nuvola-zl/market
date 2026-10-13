@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>长沙梁继伟超市购买系统 - 注册</title>
+
+  <!-- 👇 2. 改标签页图标！引入你自己的favicon -->
+  <link rel="icon" type="image/x-icon" th:href="@{/image/1.ico}">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "微软雅黑", "幼圆", "方正卡通简体", sans-serif;
+    }
+
+    :root {
+      --bg-body: #fdf6fb;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(255,255,255,0.3);
+      --text-main: #333;
+      --text-sub: #777;
+      --input-bg: rgba(255,255,255,0.7);
+      --input-border: #e5d1e0;
+      --btn-color: #ff70c0;
+      --star-color: #ff96d2;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #1a1018;
+      --card-bg: rgba(40,20,35,0.8);
+      --card-border: rgba(255,255,255,0.1);
+      --text-main: #eee;
+      --text-sub: #ccc;
+      --input-bg: rgba(60,30,50,0.6);
+      --input-border: #555;
+      --btn-color: #ff96d2;
+      --star-color: #ffc0e6;
+    }
+
+    body {
+      background: var(--bg-body);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      transition: all 0.6s ease;
+    }
+
+    .left-bg {
+      width: 65%;
+      position: relative;
+      overflow: hidden;
+      background: url("/image/r.jpg") center/cover no-repeat;
+    }
+    .left-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.15);
+    }
+
+    .dot {
+      position: absolute;
+      background: var(--star-color);
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+
+    .meteor {
+      position: absolute;
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--star-color));
+      opacity: 0.7;
+      transform: rotate(-45deg);
+      animation: meteorRun linear infinite;
+    }
+    @keyframes meteorRun {
+      0% {transform: translateX(0) translateY(-100px) rotate(-45deg);opacity:0;}
+      10% {opacity:1;}
+      90% {opacity:1;}
+      100% {transform: translateX(600px) translateY(1000px) rotate(-45deg);opacity:0;}
+    }
+
+    .right-box {
+      width: 35%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9;
+    }
+
+    /* 🔥 古风毛玻璃注册框 */
+    .reg-card {
+      width: 380px;
+      padding: 50px 40px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 22px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      transition: all 0.6s ease;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: bold;
+      color: var(--text-main);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .sub-title {
+      text-align: center;
+      color: var(--text-sub);
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+
+    .msg {
+      color: #f56c6c;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .input-item {
+      margin-bottom: 24px;
+    }
+    .input-item input {
+      width: 100%;
+      height: 48px;
+      padding: 0 18px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      color: var(--text-main);
+    }
+
+    .reg-btn {
+      width: 100%;
+      height: 48px;
+      background: var(--btn-color);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .reg-btn:hover {
+      background: #f553ac;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 14px;
+    }
+    .link a {
+      color: var(--btn-color);
+      text-decoration: none;
+    }
+
+    .theme-switch {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      width: 50px;
+      height: 26px;
+      border-radius: 999px;
+      background: #ccc;
+      cursor: pointer;
+      transition: 0.5s;
+      z-index:10;
+    }
+    .theme-switch::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: 0.5s;
+    }
+    [data-theme="dark"] .theme-switch {
+      background: var(--btn-color);
+    }
+    [data-theme="dark"] .theme-switch::after {
+      left: 26px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="left-bg" id="starArea"></div>
+
+<div class="right-box">
+  <div class="theme-switch" id="themeBtn"></div>
+  <div class="reg-card">
+    <div class="title">新用户注册</div>
+    <div class="sub-title">欢迎加入我们</div>
+
+    <div class="msg" th:text="${msg}" th:if="${msg != null}"></div>
+
+    <form action="/register" method="post">
+      <div class="input-item">
+        <input type="text" name="username" placeholder="请设置用户名" required>
+      </div>
+      <div class="input-item">
+        <input type="password" name="password" placeholder="请设置密码" required>
+      </div>
+      <div class="input-item">
+        <input type="password" name="rePassword" placeholder="请再次输入密码" required>
+      </div>
+      <button class="reg-btn" type="submit">立即注册</button>
+    </form>
+
+    <div class="link">
+      <a href="/login">已有账号？去登录</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const starArea = document.getElementById('starArea');
+
+  for(let i=0;i<=800;i++){
+    let dot = document.createElement('div');
+    dot.className = 'dot';
+    let size = Math.random()*2+0.5;
+    dot.style.width = size+'px';
+    dot.style.height = size+'px';
+    dot.style.left = Math.random()*100+'%';
+    dot.style.top = Math.random()*100+'%';
+    starArea.appendChild(dot);
+  }
+
+  function createMeteor(){
+    let m = document.createElement('div');
+    m.className = 'meteor';
+    m.style.left = Math.random()*100+'%';
+    m.style.animationDuration = Math.random()*2+1+'s';
+    starArea.appendChild(m);
+    setTimeout(()=>m.remove(),4000);
+  }
+  setInterval(createMeteor,80);
+
+  const themeBtn = document.getElementById('themeBtn');
+  const html = document.documentElement;
+  if(localStorage.getItem('theme') === 'dark'){
+    html.setAttribute('data-theme','dark');
+  }
+  themeBtn.onclick = function(){
+    if(html.hasAttribute('data-theme')){
+      html.removeAttribute('data-theme');
+      localStorage.setItem('theme','light');
+    }else{
+      html.setAttribute('data-theme','dark');
+      localStorage.setItem('theme','dark');
+    }
+  };
+</script>
+</body>
+</html>

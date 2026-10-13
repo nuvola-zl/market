@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>添加商品</title>
+    <style>
+        * {
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"微软雅黑";
+        }
+        html,body {
+            height:100%;
+        }
+        body {
+            background:url("/image/7.jpeg") center/cover no-repeat fixed;
+            position:relative;
+        }
+        body::before {
+            content:"";
+            position:absolute;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.2);
+        }
+
+        #starArea {
+            position:absolute;
+            width:100%;
+            height:100%;
+            pointer-events:none;
+        }
+        .dot {
+            position:absolute;
+            background:#fff;
+            border-radius:50%;
+            opacity:0.5;
+        }
+        .meteor {
+            position:absolute;
+            width:1px;
+            height:80px;
+            background:linear-gradient(to bottom,transparent,#fff);
+            opacity:0.4;
+            transform:rotate(-45deg);
+            animation:a 2s infinite;
+        }
+        @keyframes a {
+            0%{transform:translate(0,-100px) rotate(-45deg);opacity:0}
+            10%{opacity:1}
+            100%{transform:translate(600px,1000px) rotate(-45deg);opacity:0}
+        }
+
+        /* 右侧卡片 + 可滚动 */
+        .add-box {
+            width:420px;
+            position:absolute;
+            right:60px;
+            top:50%;
+            transform:translateY(-50%);
+            padding:50px 40px;
+            background: linear-gradient(160deg, #1a1a2e 0%, #251d3a 50%, #3a1c45 100%);
+            border-radius:24px;
+            z-index:10;
+            color:#fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            max-height: 90vh;
+            overflow-y: auto; /* 🔥 窗口变小自动滚动 */
+        }
+        h2 {
+            text-align:center;
+            margin-bottom:35px;
+            font-size:26px;
+            color: #ffd0e6;
+        }
+        .item {
+            margin-bottom:24px;
+        }
+        .item label {
+            display:block;
+            margin-bottom:8px;
+            font-size:14px;
+            color:#eee;
+        }
+        .item input, .item select {
+            width:100%;
+            height:46px;
+            padding:0 16px;
+            background: rgba(255,255,255,0.15); /* 🔥 加深输入框背景 */
+            border:1px solid rgba(255,255,255,0.3);
+            border-radius:12px;
+            color:#fff; /* 🔥 文字变白 */
+            outline:none;
+            font-size:15px;
+        }
+        /* 🔥 下拉选项强制加深颜色 */
+        .item select option {
+            background: #2d2b3d;
+            color: #fff;
+        }
+        .item input:focus {
+            border-color: #ff96d2;
+        }
+        .tip {
+            font-size:12px;
+            opacity:0.7;
+            margin-top:4px;
+        }
+
+        /* ———————————————————————————————— */
+        /* ✅ 这里我已经修好：图片预览框变亮、变白、清晰显示 */
+        /* ———————————————————————————————— */
+        .img-preview {
+            width:120px;
+            height:120px;
+            border:1px solid rgba(255,255,255,0.3);
+            border-radius:12px;
+            margin-top:10px;
+            overflow:hidden;
+            background:rgba(255, 255, 255, 0.85); /* 变浅！ */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .img-preview img {
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            background:#fff;
+        }
+
+        .btn {
+            width:100%;
+            height:48px;
+            background:linear-gradient(to right, #ff57b2, #ff96d2);
+            color:#fff;
+            border:none;
+            border-radius:14px;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+            margin-top:10px;
+            transition:0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255,87,178,0.3);
+        }
+    </style>
+</head>
+
+<body>
+<div id="starArea"></div>
+
+<div class="add-box">
+    <h2>新增商品</h2>
+    <form action="/home/addGoods" method="post">
+        <div class="item"><label>商品名称</label><input type="text" name="name" required></div>
+        <div class="item"><label>单价</label><input type="number" step="0.01" name="price" required></div>
+        <div class="item"><label>单位</label><input type="text" name="unit" required></div>
+        <div class="item"><label>库存</label><input type="number" name="stock" required></div>
+
+        <div class="item">
+            <label>商品分类</label>
+            <select name="category" required>
+                <option value="">请选择分类</option>
+                <option value="水果">水果</option>
+                <option value="蔬菜">蔬菜</option>
+                <option value="衣物">衣物</option>
+                <option value="电子">电子</option>
+                <option value="运动">运动</option>
+                <option value="医药">医药</option>
+                <option value="图书">图书</option>
+                <option value="饮料">饮料</option>
+                <option value="酒类">酒类</option>
+                <option value="粮油">粮油</option>
+                <option value="其他">其他</option>
+            </select>
+        </div>
+
+        <div class="item">
+            <label>图片路径</label>
+            <input type="text" name="image" id="imgPath" oninput="p()" required>
+            <div class="tip">放入 static/images</div>
+            <div class="img-preview"><img id="preImg"></div>
+        </div>
+
+        <div class="item"><label>商品描述</label><input type="text" name="description"></div>
+        <button class="btn">提交添加</button>
+    </form>
+</div>
+
+<script>
+    // 打开图片预览功能
+    function p(){document.getElementById("preImg").src=document.getElementById("imgPath").value;}
+
+    // const s=document.getElementById("starArea");
+    // for(let i=0;i<600;i++){
+    //     let d=document.createElement("div");
+    //     d.className="dot";
+    //     let size=Math.random()*2+0.5;
+    //     d.style.width=size+"px";
+    //     d.style.height=size+"px";
+    //     d.style.left=Math.random()*100+"%";
+    //     d.style.top=Math.random()*100+"%";
+    //     s.appendChild(d);
+    // }
+    // function m(){
+    //     let e=document.createElement("div");
+    //     e.className="meteor";
+    //     e.style.left=Math.random()*100+"%";
+    //     s.appendChild(e);
+    //     setTimeout(()=>e.remove(),3000);
+    // }
+    // setInterval(m,120);
+</script>
+</body>
+</html>

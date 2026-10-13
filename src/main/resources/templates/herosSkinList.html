@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>王者皮肤列表</title>
+    <style>
+        * {
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"微软雅黑","Microsoft YaHei";
+        }
+        body {
+            background:url("/image/安琪拉.png") center/cover fixed;
+            padding: 30px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            display: flex;
+            gap: 30px;
+        }
+
+        /* 左侧筛选侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: #111;
+            border-radius: 16px;
+            padding: 25px;
+            color: #fff;
+            border: 1px solid #444;
+            height: fit-content;
+            position: sticky;
+            top: 30px;
+        }
+        .sidebar h3 {
+            color: #ffcc33;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .sidebar a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            background: #222;
+            text-align: center;
+            cursor: pointer;
+        }
+        .sidebar a:hover {
+            background: #ff4444;
+        }
+        .sidebar a.active {
+            background: #ff3333;
+            font-weight: bold;
+        }
+
+        /* 右侧内容 */
+        .content {
+            flex: 1;
+        }
+
+        .title {
+            text-align:center;
+            color:#ffcc66;
+            font-size:36px;
+            margin-bottom:30px;
+            text-shadow:0 0 10px #f00;
+        }
+        .back-btn {
+            padding:12px 24px;
+            background:#ff4444;
+            color:#fff;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            margin-bottom:20px;
+            font-size:16px;
+        }
+
+        /* 皮肤卡片网格 */
+        .grid {
+            display:grid;
+            grid-template-columns: repeat(4,1fr);
+            gap:20px;
+        }
+        .card {
+            background:#111;
+            color:#fff;
+            border-radius:16px;
+            overflow:hidden;
+            text-align:center;
+            padding-bottom:16px;
+            transition:0.3s;
+            border:1px solid #444;
+        }
+        .card:hover {
+            transform:translateY(-5px);
+            border-color:#ff4444;
+        }
+        .card img {
+            width:100%;
+            height:180px;
+            object-fit:cover;
+        }
+        .tag {
+            display:inline-block;
+            padding:4px 10px;
+            background:#ff3333;
+            color:#fff;
+            font-size:12px;
+            border-radius:6px;
+            margin:6px;
+        }
+        .price {
+            color:#ffcc33;
+            font-size:18px;
+            font-weight:bold;
+            margin:8px 0;
+        }
+        .btn {
+            padding:10px 20px;
+            background:linear-gradient(90deg,#ff4444,#ff0000);
+            color:#fff;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            margin:5px;
+        }
+
+        /* 弹框 */
+        .modal {
+            display:none;
+            position:fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.7);
+            z-index:999;
+            align-items:center;
+            justify-content:center;
+        }
+        .modal-content {
+            background:#1a1a1e;
+            color:#fff;
+            width:500px;
+            padding:30px;
+            border-radius:20px;
+            text-align:center;
+            border:2px solid #ff4444;
+            position:relative;
+        }
+        .modal img {
+            width:100%;
+            height:220px;
+            object-fit:cover;
+            border-radius:10px;
+            margin-bottom:15px;
+        }
+        .close {
+            position:absolute;
+            right:20px; top:15px;
+            color:#fff;
+            font-size:24px;
+            cursor:pointer;
+        }
+
+        /* 购买成功提示 */
+        .success-tip {
+            display:none;
+            position:fixed;
+            top:50%; left:50%;
+            transform:translate(-50%,-50%);
+            background:#28a745;
+            color:#fff;
+            padding:25px 40px;
+            border-radius:12px;
+            font-size:18px;
+            z-index:1000;
+        }
+
+        /* 错误提示框 */
+        #msgBox {
+            position:fixed;
+            top:20px;
+            left:50%;
+            transform:translateX(-50%);
+            background:#ff4444;
+            color:white;
+            padding:15px 30px;
+            border-radius:10px;
+            font-size:16px;
+            z-index:9999;
+        }
+
+        /* ============================== */
+        /* 🔥 王者荣耀官方蓝色充值界面 */
+        /* ============================== */
+        #chargeModal .modal-content {
+            background: linear-gradient(180deg, #155BCB 0%, #0F387A 100%);
+            width: 420px;
+            border: 2px solid #4D9FFF;
+            text-align: center;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(21,91,203,0.5);
+        }
+
+        .charge-title {
+            font-size: 28px;
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 8px #4D9FFF;
+        }
+
+        .charge-item {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 16px;
+            margin: 20px 0;
+            border: 1px solid #8BC6FF;
+            backdrop-filter: blur(4px);
+        }
+
+        .charge-money {
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .charge-points {
+            font-size: 36px;
+            color: #FFD700;
+            font-weight: bold;
+            text-shadow: 0 0 10px #FFD700;
+        }
+
+        .charge-desc {
+            color: #cce4ff;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .charge-btn {
+            background: linear-gradient(90deg, #FFD700, #FFB400);
+            color: #0F387A;
+            font-size: 18px;
+            padding: 14px 30px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+        }
+
+        .charge-note {
+            color: #cce4ff;
+            font-size: 12px;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- 错误提示 -->
+<div th:if="${param.msg}" id="msgBox">
+    [[${param.msg}]]
+</div>
+
+<div class="container">
+
+    <!-- 左侧侧边栏 -->
+    <div class="sidebar">
+        <h3>英雄定位</h3>
+        <a th:class="${currentCategory == '全部' ? 'active' : ''}" href="/king/skins">全部</a>
+        <a th:class="${currentCategory == '法师' ? 'active' : ''}" href="/king/skins?category=法师">法师</a>
+        <a th:class="${currentCategory == '射手' ? 'active' : ''}" href="/king/skins?category=射手">射手</a>
+        <a th:class="${currentCategory == '辅助' ? 'active' : ''}" href="/king/skins?category=辅助">辅助</a>
+        <a th:class="${currentCategory == '战士' ? 'active' : ''}" href="/king/skins?category=战士">战士</a>
+        <a th:class="${currentCategory == '刺客' ? 'active' : ''}" href="/king/skins?category=刺客">刺客</a>
+        <a th:class="${currentCategory == '坦克' ? 'active' : ''}" href="/king/skins?category=坦克">坦克</a>
+
+        <!-- 点券充值 -->
+        <a style="background:#155BCB;font-weight:bold;" onclick="openCharge()">点券充值</a>
+    </div>
+
+    <!-- 右侧内容 -->
+    <div class="content">
+        <button class="back-btn" onclick="location.href='/index'">返回王者商城</button>
+        <h1 class="title">全部王者皮肤</h1>
+
+        <!-- 皮肤列表 -->
+        <div class="grid">
+            <div class="card" th:each="skin : ${heroSkinList}">
+                <img th:src="${skin.skinImg}">
+                <h3>[[${skin.heroName}]] - [[${skin.skinName}]]</h3>
+                <span class="tag">[[${skin.heroPosition}]]</span>
+                <span class="tag">[[${skin.skinQuality}]]</span>
+                <div class="price">[[${skin.skinPrice}]] 元</div>
+                <div style="color:#ccc; margin:5px 0;">库存：[[${skin.skinStock}]]</div>
+
+                <button class="btn" th:onclick="|openDetail([[${skin.id}]])|">查看详情</button>
+                <button class="btn" th:onclick="|openBuy([[${skin.id}]])|">立即购买</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 详情弹框 -->
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="detailImg">
+        <h2 id="detailHeroSkin"></h2>
+        <p style="margin:8px 0;">定位：<span id="detailPos"></span></p>
+        <p style="margin:8px 0;">品质：<span id="detailQuality"></span></p>
+        <p style="margin:8px 0; color:gold;">价格：<span id="detailPrice"></span> 元</p>
+        <p style="margin:8px 0;">库存：<span id="detailStock"></span></p>
+        <button class="btn" onclick="buyNow()">确认购买</button>
+    </div>
+</div>
+
+<!-- ============================== */
+/* 🔥 王者官方蓝色点券充值弹窗 */
+/* ============================== -->
+<div id="chargeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeCharge()">&times;</span>
+        <div class="charge-title">点券充值</div>
+
+        <div class="charge-item">
+            <div class="charge-money">售价：2.8 元</div>
+            <div class="charge-points">288 点券</div>
+            <div class="charge-desc">官方直充 · 即时到账</div>
+        </div>
+
+        <button class="charge-btn">确认支付 2.8 元</button>
+        <div class="charge-note">
+            虚拟物品，充值后不予退换<br>
+            请确认账号信息无误后再进行支付
+        </div>
+    </div>
+</div>
+
+<!-- 购买成功提示 -->
+<div id="successTip" class="success-tip">
+    购买成功！皮肤已加入你的账户！
+</div>
+
+<script>
+    let currentSkinId = 0;
+    let skins = /*[[${heroSkinList}]]*/ [];
+
+    // 详情弹窗
+    function openDetail(id) {
+        currentSkinId = id;
+        let skin = skins.find(s => s.id === id);
+        document.getElementById("detailImg").src = skin.skinImg;
+        document.getElementById("detailHeroSkin").innerText = skin.heroName + " - " + skin.skinName;
+        document.getElementById("detailPos").innerText = skin.heroPosition;
+        document.getElementById("detailQuality").innerText = skin.skinQuality;
+        document.getElementById("detailPrice").innerText = skin.skinPrice;
+        document.getElementById("detailStock").innerText = skin.skinStock;
+        document.getElementById("detailModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("detailModal").style.display = "none";
+    }
+
+    // 购买
+    function openBuy(id) {
+        currentSkinId = id;
+        buyNow();
+    }
+
+    function buyNow() {
+        closeModal();
+        let form = document.createElement("form");
+        form.method = "post";
+        form.action = "/king/buySkin";
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "id";
+        input.value = currentSkinId;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+
+        document.getElementById("successTip").style.display = "block";
+        setTimeout(() => {
+            document.getElementById("successTip").style.display = "none";
+        }, 2000);
+    }
+
+    // 充值弹窗
+    function openCharge() {
+        document.getElementById("chargeModal").style.display = "flex";
+    }
+    function closeCharge() {
+        document.getElementById("chargeModal").style.display = "none";
+    }
+
+    // 提示3秒消失
+    setTimeout(() => {
+        let msgBox = document.getElementById("msgBox");
+        if (msgBox) msgBox.style.display = "none";
+    }, 3000);
+</script>
+
+</body>
+</html>

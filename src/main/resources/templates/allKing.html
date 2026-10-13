@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>王者荣耀商城</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        /* 王者背景 */
+        body {
+            background: url("/image/1.jpeg") center/cover no-repeat fixed;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        /* 右侧王者卡片 */
+        .king-box {
+            width: 460px;
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 50px 40px;
+            background: linear-gradient(150deg, #1a1a1e 0%, #2b1818 50%, #4c1c1c 100%);
+            border-radius: 26px;
+            z-index: 10;
+            color: #fff;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.6);
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        /* 标题 LOGO 风格 */
+        .title {
+            font-size: 30px;
+            color: #f8e0b8;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #ffcc66;
+        }
+
+        .sub-title {
+            color: #ccc;
+            font-size: 15px;
+            margin-bottom: 40px;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: block;
+            width: 280px;
+            height: 50px;
+            line-height: 50px;
+            margin: 16px auto;
+            border-radius: 14px;
+            background: linear-gradient(to right, #ff4c4c, #ff1a1a);
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 60, 60, 0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(to right, #ffcc66, #ffaa33);
+            color: #111;
+        }
+
+        .back-btn {
+            background: #444;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="king-box">
+    <div class="title">王者荣耀商城</div>
+    <div class="sub-title">Hero Skin Shop</div>
+
+
+    <a class="btn btn-gold" href="/king/skins">显示全部皮肤列表</a>
+
+    <a class="btn" href="#">按英雄查看</a>
+    <a class="btn" href="#">按品质查看</a>
+    <a class="btn" href="#">我的皮肤背包</a>
+    <a class="btn back-btn" href="/index">返回主界面</a>
+    <a class="btn" th:if="${session.loginUser?.role=='admin'}" href="/king/addSkin">添加皮肤</a>
+</div>
+
+</body>
+</html>
